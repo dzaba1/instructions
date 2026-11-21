@@ -67,7 +67,7 @@ For ASP.NET Core projects, also read [aspnetcore.md](aspnetcore.md) (raw: https:
 - When a project needs a database, use Entity Framework Core behind repository interfaces.
 - Schema changes go through EF Core migrations. Seed static reference data with `HasData`, and data that needs logic with `UseSeeding`/`UseAsyncSeeding`.
 - Read-only queries use `AsNoTracking()` and project to DTOs with `Select`. Avoid N+1 queries (use projections or `Include`). Filter, sort and paginate in the database, not in memory.
-- Don't use the EF Core in-memory provider in tests; it doesn't behave like a relational database. Use SQLite or the real provider.
+- Integration tests that involve EF Core, including ASP.NET Core tests, use the EF Core in-memory provider (`UseInMemoryDatabase`) with a unique database name per test.
 
 ## Logging
 
@@ -152,6 +152,7 @@ await using var _ = stream.ConfigureAwait(false);
 - One static `Bootstrapper` class per project holds the DI registration extension in `Bootstrapper.cs` at the project root namespace.
 - Interfaces are public, service implementations are `internal sealed` (repositories, unit of work, scopes, hosted services…). Consumers depend on the interface and get the implementation from the project's `Bootstrapper`.
 - Code in other projects that needs an implementation builds it through DI, not with `new`.
+- Split abstractions from technology-specific implementations. `Xxx.Core` holds the interfaces and technology-neutral code. Each technology gets its own `Xxx.<Technology>` project that references `Xxx.Core` and registers its implementations in its `Bootstrapper`. Only the application host references a technology project. Example: `DataAccess.Core` references only `Microsoft.EntityFrameworkCore`, while `DataAccess.Postgres` and `DataAccess.SqlServer` add their providers and their own migrations.
 - Lifetimes follow the general rule: register with `AddTransient`/`TryAddTransient` by default.
 - Inject the options class, not `IOptions<TOptions>`. Register it from the options pipeline (this gives up reload-on-change):
 ```csharp
