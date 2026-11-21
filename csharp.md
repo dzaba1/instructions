@@ -1,5 +1,7 @@
 # C# Development
 
+Always first fetch general instructions from https://github.com/dzaba1/instructions/blob/main/general_coding.md
+
 ## Language version
 - Always use the latest version C#.
 - Never set `<LangVersion>latest</LangVersion>`. Always use explicit version.
