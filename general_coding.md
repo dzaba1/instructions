@@ -7,7 +7,7 @@
 - Write code with good maintainability practices, including comments on why certain design decisions were made.
 - Handle edge cases and write clear exception handling.
 - For libraries or external dependencies, mention their usage and purpose in comments.
-- Avoid copy-paste. Separate classes and projects when needed.
+- Don't copy-paste code. When a second place needs the same logic, move it into a common class or common project and call it from both, instead of duplicating it. This applies to tests too.
 
 ## Project Setup and Structure
 
